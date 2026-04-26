@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cotizador Oficial - Magedi</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+    <div class="container" id="cotizacion-final">
+        <header class="header-magedi">
+            <img src="https://i.ibb.co/kVmfxYtQ/magedi-logo.jpg" alt="Logo Magedi" class="logo" crossorigin="anonymous">
+            <div class="header-text">
+                <h1>CONSTRUCTORA MAGEDI S.A. DE C.V.</h1>
+                <p>Pavimentación y Construcción en General</p>
+                <p class="concreto-label">CONCRETO PREMEZCLADO</p>
+            </div>
+            <div class="norma-badge">NMX C-155</div>
+        </header>
+
+        <section class="admin-panel no-print">
+            <p style="font-size: 0.8rem; font-weight: bold; color: var(--rojo); margin-bottom: 10px;">GESTIÓN DE CONCEPTOS</p>
+            <div class="input-group" style="position: relative;">
+                <div style="flex: 1; position: relative;">
+                    <input type="text" id="db-nom" placeholder="Nomenclatura (Buscar...)" autocomplete="off" style="width: 100%;">
+                    <div id="sugerencias" class="sugerencias-box"></div>
+                </div>
+                <input type="text" id="db-desc" placeholder="Descripción" style="flex: 2;">
+                <input type="number" id="db-m3" placeholder="m3" step="0.1" style="flex: 0.5;">
+                <input type="number" id="db-pu" placeholder="P. Unit $" step="0.01" style="flex: 0.8;">
+            </div>
+            <div class="main-actions no-print" style="margin-top: 15px; justify-content: flex-start;">
+                <button onclick="agregarFila()" class="btn-add" style="background: var(--rojo);">Añadir a la lista</button>
+                <button onclick="guardarEnCatalogo()" class="btn-save" style="background: var(--azul);">Añadir y Guardar</button>
+            </div>
+        </section>
+
+        <section class="client-section">
+            <div class="meta-data">
+                <p><strong>Fecha:</strong> <input type="date" id="fecha-actual"></p>
+            </div>
+            <div class="client-grid">
+                <div class="f-field"><label>Atención / Cliente:</label><input type="text" id="c-nom"></div>
+                <div class="f-field"><label>Empresa:</label><input type="text" id="c-empresa"></div>
+                <div class="f-field"><label>Teléfono Cliente:</label><input type="text" id="c-tel"></div>
+                <div class="f-field" style="grid-column: span 3;"><label>Nombre de la Obra:</label><input type="text" id="c-obra"></div>
+            </div>
+        </section>
+
+        <div class="intro-text">
+            <p>Atendiendo su amable solicitud a continuación, le hacemos llegar nuestra propuesta comercial de precios de los concretos premezclados. Nuestros concretos se rigen bajo la <strong>Norma Mexicana de Concretos NMX C-155</strong> utilizando cemento <strong>CPC 40 marca CEMEX</strong>.</p>
+        </div>
+
+        <table id="tabla-magedi">
+            <thead>
+                <tr>
+                    <th>Nomenclatura</th>
+                    <th>m3</th>
+                    <th>Descripción</th>
+                    <th>P. Unitario ($)</th>
+                    <th>Total ($)</th>
+                    <th class="no-print">X</th>
+                </tr>
+            </thead>
+            <tbody id="cuerpo-tabla"></tbody>
+        </table>
+
+        <div class="footer-summary">
+            <div class="bancos-container">
+                <div class="banco-box">
+                    <p><strong>PAGOS A NOMBRE DE: CONSTRUCTORA MAGEDI S.A. DE C.V.</strong></p>
+                    <p><strong>RFC:</strong> CMA160823BY2</p>
+                    <p><strong>BANBAJIO:</strong> CUENTA: 0189551790201 | CLABE: 030849900011091287</p>
+                </div>
+            </div>
+            <div class="totales-container">
+                <div class="totales-row"><span>Subtotal:</span> <span id="st">$0.00</span></div>
+                <div class="totales-row"><span>IVA (16%):</span> <span id="iv">$0.00</span></div>
+                <div class="totales-row total-destacado"><span>TOTAL:</span> <span id="tt">$0.00</span></div>
+            </div>
+        </div>
+
+        <section class="info-adicional">
+            <div class="notas-box">
+                <p><strong>NOTAS IMPORTANTES:</strong></p>
+                <ul>
+                    <li>Condiciones de pago: <strong>CONTADO</strong>.</li>
+                    <li><strong>Precios sujetos a cambio sin previo aviso.</strong></li>
+                    <li>Vigencia de la cotización: 15 días.</li>
+                    <li>Servicio de vacío por olla a <strong>6m³</strong>.</li>
+                    <li>Servicio mínimo de bomba: <strong>15m³</strong>.</li>
+                </ul>
+            </div>
+            <div class="logistica-box">
+                <p><strong>LOGÍSTICA Y HORARIOS:</strong></p>
+                <p>Lunes a Viernes 7:00 AM - 6:00 PM | Sábados 7:00 AM - 2:00 PM.</p>
+                <p>Pedidos con 24 hrs de anticipación. Radio de operación: 40 KM.</p>
+            </div>
+        </section>
+
+        <footer class="footer-final">
+            <div class="vendedor-datos">
+                <div class="vendedor-inputs">
+                    <input type="text" placeholder="Nombre del Vendedor" id="v-nombre">
+                    <input type="text" placeholder="Teléfono" id="v-tel">
+                    <input type="text" placeholder="Correo Electrónico" id="v-correo">
+                </div>
+                <p class="firma-label">Nombre, Teléfono y Correo del Vendedor</p>
+            </div>
+            <div class="planta-info">
+                <p><strong>OFICINAS:</strong> CARRETERA A MATA DE PITA LOTE 2. EJIDO MALIBRAN DE LAS BRUJAS. CP. 91698 VERACRUZ, VER.</p>
+                <p><strong>PLANTA:</strong> Parcela S/N. El Cedral, CP. 94270. Medellín, Ver.</p>
+            </div>
+        </footer>
+
+        <div class="main-actions no-print">
+            <button onclick="finalizarYGuardar()" class="btn-save" style="background: var(--verde);">💾 Guardar Cotización</button>
+            <button onclick="generarPDF()" class="btn-pdf" style="background: var(--azul);">📥 PDF</button>
+            <button onclick="capturarImagen()" class="btn-wa" style="background: #e67e22;">📸 WhatsApp</button>
+            <button onclick="nuevaCotizacion()" style="background:#888; color:white;">🆕 Nueva</button>
+        </div>
+
+        <div id="lista-historial" class="no-print"></div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

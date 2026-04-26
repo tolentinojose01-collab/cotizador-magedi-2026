@@ -1,0 +1,49 @@
+:root { --rojo: #d32f2f; --gris: #2d2d2d; --verde: #27ae60; --azul: #2980b9; }
+
+body { font-family: Arial, sans-serif; background: #f4f4f4; padding: 10px; color: #222; line-height: 1.5; }
+
+.container { max-width: 850px; margin: auto; background: #fff; padding: 30px; border-top: 10px solid var(--rojo); box-shadow: 0 0 15px rgba(0,0,0,0.1); position: relative; }
+
+.header-magedi { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--rojo); padding-bottom: 10px; margin-bottom: 15px; }
+.logo { width: 140px; height: auto; }
+.header-text { text-align: center; flex-grow: 1; }
+.header-text h1 { color: var(--rojo); font-size: 1.4rem; margin: 0; }
+.concreto-label { font-weight: bold; color: #444; font-size: 1rem; margin-top: 5px; }
+.norma-badge { border: 2px solid #000; padding: 5px; font-weight: bold; font-size: 0.7rem; }
+
+.admin-panel { background: #fff3f3; border: 1px dashed var(--rojo); padding: 15px; margin-bottom: 15px; border-radius: 8px; }
+.input-group { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.input-group input { padding: 10px; border: 1px solid #ccc; border-radius: 4px; }
+
+.sugerencias-box { position: absolute; top: 45px; left: 0; right: 0; background: white; border: 1px solid #ddd; z-index: 9999; max-height: 200px; overflow-y: auto; display: none; box-shadow: 0 4px 12px rgba(0,0,0,0.15); border-radius: 4px; }
+.sugerencia-item { padding: 10px; cursor: pointer; border-bottom: 1px solid #eee; }
+.sugerencia-item:hover { background: #fce4e4; }
+
+.client-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 10px; }
+.f-field label { font-size: 0.75rem; font-weight: bold; color: var(--rojo); display: block; }
+.f-field input { width: 100%; border: none; border-bottom: 1px solid #bbb; padding: 8px 0; outline: none; font-size: 1rem; }
+
+.intro-text { margin: 15px 0; font-size: 0.85rem; text-align: justify; border-left: 3px solid var(--rojo); padding: 10px 15px; background: #fdfdfd; }
+
+table { width: 100%; border-collapse: collapse; margin: 15px 0; }
+th { background: var(--gris); color: white; padding: 10px; font-size: 0.85rem; }
+td { border: 1px solid #ddd; padding: 10px; text-align: center; font-size: 0.9rem; }
+
+.footer-summary { display: flex; justify-content: space-between; margin-top: 15px; align-items: flex-start; }
+.banco-box { font-size: 0.7rem; background: #f9f9f9; padding: 10px; border-left: 5px solid var(--rojo); max-width: 60%; }
+
+.totales-container { min-width: 220px; }
+.totales-row { display: flex; justify-content: space-between; padding: 5px 0; font-size: 0.95rem; border-bottom: 1px solid #eee; }
+.total-destacado { font-weight: bold; color: var(--rojo); font-size: 1.3rem; border-top: 2px solid var(--rojo); margin-top: 5px; }
+
+.info-adicional { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px; font-size: 0.75rem; border-top: 1px solid #eee; padding-top: 15px; }
+.vendedor-datos { margin-top: 50px; text-align: right; width: 350px; margin-left: auto; }
+.vendedor-inputs input { border: none; width: 100%; text-align: right; font-size: 1rem; outline: none; display: block; padding: 4px 0; font-weight: bold; border-bottom: 1px solid #eee; }
+.firma-label { font-size: 0.75rem; color: #555; font-weight: bold; margin-top: 5px; }
+
+.planta-info { margin-top: 30px; text-align: center; font-size: 0.7rem; color: #666; border-top: 1px solid #eee; padding-top: 10px; }
+
+.main-actions { display: flex; gap: 10px; justify-content: center; margin-top: 30px; }
+.main-actions button { padding: 10px 20px; border-radius: 5px; border: none; cursor: pointer; font-weight: bold; color: white; }
+
+@media print { .no-print { display: none !important; } .container { box-shadow: none; border: none; } }
