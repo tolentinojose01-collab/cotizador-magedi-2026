@@ -21,22 +21,20 @@
         </header>
 
         <section class="admin-panel no-print">
-            <h3>Panel de Control (Magedi Hub)</h3>
+            <h3>Panel de Control (Catálogo y Hub)</h3>
             <div class="grid-form">
-                <input type="text" id="db-nom" placeholder="Producto (ej: MR-42)">
-                <input type="text" id="db-desc" placeholder="Descripción">
+                <input type="text" id="db-nom" placeholder="Nomenclatura (P-250, MR-42...)">
+                <input type="text" id="db-desc" placeholder="Descripción técnica completa">
                 <input type="number" id="db-pu" placeholder="Precio Unitario">
+                <button onclick="guardarEnCatalogo()" style="background: var(--azul); color:white;">💾 Guardar en Catálogo</button>
             </div>
             <div id="sugerencias" class="sugerencias-box"></div>
             
             <div style="margin-top: 15px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                <input type="number" id="db-m3" placeholder="Cantidad (m3)">
-                <button onclick="agregarFila()" style="background: var(--verde); color:white; border:none; padding:10px; border-radius:5px; cursor:pointer;">+ Añadir a Cotización</button>
+                <input type="number" id="db-m3" placeholder="Cantidad m3">
+                <button onclick="agregarFila()" style="background: var(--verde); color:white;">+ Añadir a Tabla</button>
             </div>
-
-            <div id="lista-historial" style="margin-top:20px; border-top:1px solid #ccc; padding-top:10px;">
-                <p style="font-size:0.8rem; color:#666;">Conectando al Hub de Magedi...</p>
-            </div>
+            <div id="lista-historial" style="margin-top:20px; border-top:1px solid #ccc; padding-top:10px;"></div>
         </section>
 
         <section class="client-data">
@@ -45,7 +43,8 @@
                 <input type="date" id="fecha-actual">
             </div>
             <div class="data-row">
-                <input type="text" id="c-obra" placeholder="Ubicación de la Obra (Veracruz, Medellín, etc.)">
+                <input type="text" id="c-obra" placeholder="Ubicación de la Obra">
+                <input type="text" id="c-atencion" placeholder="Atención a:">
             </div>
         </section>
 
@@ -53,6 +52,7 @@
             <thead>
                 <tr>
                     <th>CONCEPTO</th>
+                    <th>DESCRIPCIÓN</th>
                     <th>CANTIDAD</th>
                     <th>P. UNITARIO</th>
                     <th>IMPORTE</th>
@@ -62,27 +62,46 @@
             <tbody id="cuerpo-tabla"></tbody>
         </table>
 
-        <section class="footer-calculos">
-            <div class="banco-box">
-                <p><strong>DATOS BANCARIOS:</strong></p>
-                <p>BANBAJIO | CLABE: 030905900010839818</p>
-                <p>Beneficiario: CONSTRUCTORA MAGEDI S.A. DE C.V.</p>
+        <section class="condiciones-magedi">
+            <p><strong>AGRADECIMIENTO:</strong> Por medio de la presente Constructora MAGEDI agradece su preferencia, enviándole la cotización de concreto premezclado de acuerdo a lo solicitado.</p>
+            <div class="condiciones-grid">
+                <div>
+                    <p><strong>CONDICIONES:</strong></p>
+                    <ul>
+                        <li>Precios vigentes por 15 días.</li>
+                        <li>Descarga: 30 min por unidad (excedente $500 por hora).</li>
+                        <li>Pedido con 24 hrs de anticipación.</li>
+                        <li>No se aceptan devoluciones en concreto fresco.</li>
+                    </ul>
+                </div>
+                <div class="banco-box">
+                    <p><strong>DATOS BANCARIOS:</strong></p>
+                    <p>BANBAJIO | CLABE: 030905900010839818</p>
+                    <p>CUENTA: 0329068010201</p>
+                    <p>Beneficiario: CONSTRUCTORA MAGEDI S.A. DE C.V.</p>
+                </div>
             </div>
-            <div class="totales-container">
-                <div class="totales-row"><span>SUBTOTAL:</span> <span id="st">$0.00</span></div>
-                <div class="totales-row total-destacado"><span>TOTAL:</span> <span id="tt">$0.00</span></div>
-            </div>
+        </section>
+
+        <section class="totales-container" style="text-align: right; margin-top: 10px;">
+            <p>SUBTOTAL: <span id="st">$0.00</span></p>
+            <p>I.V.A. (16%): <span id="iv">$0.00</span></p>
+            <p class="total-destacado">TOTAL: <span id="tt">$0.00</span></p>
         </section>
 
         <footer class="footer-final">
             <div class="vendedor-datos">
-                <input type="text" placeholder="Nombre del Vendedor" id="v-nombre" style="font-weight:bold; text-align:right; border:none; border-bottom:1px solid #ccc;">
+                <input type="text" id="v-nombre" placeholder="Vendedor" style="text-align:right; font-weight:bold;">
+                <input type="text" id="v-tel" placeholder="Teléfono" style="text-align:right;">
                 <p class="firma-label">Firma Autorizada</p>
+            </div>
+            <div class="planta-info" style="font-size: 0.7rem; color: #555;">
+                <p>PLANTA: Parcela S/N. El Cedral, Medellín, Ver. | OFICINA: Ejido Malibrán, Veracruz, Ver.</p>
             </div>
         </footer>
 
         <div class="main-actions no-print">
-            <button onclick="finalizarYGuardar()" style="background: var(--verde);">💾 Guardar en Hub</button>
+            <button onclick="finalizarYGuardar()" style="background: var(--verde);">💾 Guardar Hub</button>
             <button onclick="generarPDF()" style="background: var(--azul);">📥 PDF</button>
             <button onclick="location.reload()" style="background: #7f8c8d;">🆕 Nueva</button>
         </div>
@@ -91,12 +110,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getDatabase, ref, push, set, onValue, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
-
-        const firebaseConfig = {
-            databaseURL: "https://cotizador-magedi-2026-default-rtdb.firebaseio.com",
-            projectId: "cotizador-magedi-2026"
-        };
-
+        const firebaseConfig = { databaseURL: "https://cotizador-magedi-2026-default-rtdb.firebaseio.com", projectId: "cotizador-magedi-2026" };
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
         window.db = db;
