@@ -26,16 +26,18 @@
                 <input type="text" id="db-nom" placeholder="Producto (ej: MR-42)">
                 <input type="text" id="db-desc" placeholder="Descripción">
                 <input type="number" id="db-pu" placeholder="Precio Unitario">
-                <button onclick="agregarAlCatalogo()" style="background: var(--azul);">Añadir al Catálogo</button>
+                <button onclick="agregarAlCatalogo()" style="background: var(--azul);">Guardar en Catálogo</button>
             </div>
             <div id="sugerencias" class="sugerencias-box"></div>
             
             <div style="margin-top: 15px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
                 <input type="number" id="db-m3" placeholder="Cantidad (m3)">
-                <button onclick="agregarFila()" style="background: var(--verde);">+ Agregar a Cotización</button>
+                <button onclick="agregarFila()" style="background: var(--verde);">+ Añadir a Cotización</button>
             </div>
 
-            <div id="lista-historial" class="historial-container"></div>
+            <div id="lista-historial" class="historial-container" style="margin-top:20px; border-top:1px solid #ccc; padding-top:10px;">
+                <p style="font-size:0.8rem; color:#666;">Cargando historial del Hub...</p>
+            </div>
         </section>
 
         <section class="client-data">
@@ -44,7 +46,7 @@
                 <input type="date" id="fecha-actual">
             </div>
             <div class="data-row">
-                <input type="text" id="c-obra" placeholder="Ubicación de la Obra (Medellín, Veracruz, etc.)">
+                <input type="text" id="c-obra" placeholder="Ubicación de la Obra">
                 <input type="text" id="c-atencion" placeholder="Atención a:">
             </div>
         </section>
@@ -57,7 +59,7 @@
                     <th>CANTIDAD</th>
                     <th>P. UNITARIO</th>
                     <th>IMPORTE</th>
-                    <th class="no-print">Acción</th>
+                    <th class="no-print">✕</th>
                 </tr>
             </thead>
             <tbody id="cuerpo-tabla"></tbody>
@@ -66,9 +68,7 @@
         <section class="footer-calculos">
             <div class="banco-box">
                 <p><strong>DATOS BANCARIOS:</strong></p>
-                <p>BANBAJIO</p>
-                <p>CLABE: 030905900010839818</p>
-                <p>CUENTA: 0329068010201</p>
+                <p>BANBAJIO | CLABE: 030905900010839818</p>
                 <p>Beneficiario: CONSTRUCTORA MAGEDI S.A. DE C.V.</p>
             </div>
             <div class="totales-container">
@@ -80,14 +80,9 @@
 
         <footer class="footer-final">
             <div class="vendedor-datos">
-                <div class="vendedor-inputs">
-                    <input type="text" placeholder="Vendedor" id="v-nombre">
-                    <input type="text" placeholder="Teléfono" id="v-tel">
-                </div>
+                <input type="text" placeholder="Nombre del Vendedor" id="v-nombre" style="font-weight:bold; text-align:right;">
+                <input type="text" placeholder="Teléfono" id="v-tel" style="text-align:right;">
                 <p class="firma-label">Firma Autorizada</p>
-            </div>
-            <div class="planta-info">
-                <p><strong>PLANTA:</strong> Medellín, Veracruz. CP. 94270</p>
             </div>
         </footer>
 
@@ -110,6 +105,7 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
+        // Exportamos a window para que script.js pueda usarlas
         window.db = db;
         window.dbRefs = { ref, push, set, onValue, remove };
     </script>

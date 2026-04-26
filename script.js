@@ -3,8 +3,8 @@ let catalogoProductos = JSON.parse(localStorage.getItem('magedi_catalogo')) || [
 
 document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('fecha-actual').valueAsDate = new Date();
-    // Esperar un segundo a que Firebase cargue
-    setTimeout(mostrarHistorial, 1500);
+    // Esperamos un momento a que Firebase se inicialice
+    setTimeout(mostrarHistorial, 1000);
     setupBuscador();
 });
 
@@ -30,8 +30,6 @@ function setupBuscador() {
                 sugerenciasBox.appendChild(div);
             });
             sugerenciasBox.style.display = filtrados.length > 0 ? 'block' : 'none';
-        } else {
-            sugerenciasBox.style.display = 'none';
         }
     });
 }
@@ -42,12 +40,11 @@ function agregarFila() {
     const m3 = parseFloat(document.getElementById('db-m3').value);
     const pu = parseFloat(document.getElementById('db-pu').value);
 
-    if (!nom || !m3 || !pu) return alert("Completa los campos del producto");
+    if (!nom || isNaN(m3) || isNaN(pu)) return alert("Faltan datos del producto");
 
     const importe = m3 * pu;
     productos.push({ nom, desc, m3, pu, importe });
     renderTabla();
-    limpiarCamposConcepto();
 }
 
 function renderTabla() {
@@ -64,49 +61,44 @@ function renderTabla() {
                 <td>${p.m3}</td>
                 <td>$${p.pu.toFixed(2)}</td>
                 <td>$${p.importe.toFixed(2)}</td>
-                <td class="no-print"><button onclick="eliminarFila(${index})" style="background:red; color:white; border:none; border-radius:3px;">X</button></td>
+                <td class="no-print"><button onclick="eliminarFila(${index})" style="color:red; border:none; background:none; cursor:pointer;">✕</button></td>
             </tr>`;
     });
 
     const iva = subtotal * 0.16;
     const total = subtotal + iva;
-
     document.getElementById('st').innerText = `$${subtotal.toFixed(2)}`;
     document.getElementById('iv').innerText = `$${iva.toFixed(2)}`;
     document.getElementById('tt').innerText = `$${total.toFixed(2)}`;
 }
 
-function eliminarFila(i) {
-    productos.splice(i, 1);
+function eliminarFila(index) {
+    productos.splice(index, 1);
     renderTabla();
 }
 
-function limpiarCamposConcepto() {
-    ['db-nom', 'db-desc', 'db-m3', 'db-pu'].forEach(id => document.getElementById(id).value = "");
-}
-
-// FUNCIONES FIREBASE HUB
+// SINCRONIZACIÓN CON FIREBASE HUB
 async function finalizarYGuardar() {
-    if (!window.dbRefs) return alert("Esperando conexión con el Hub...");
+    if (!window.dbRefs) return alert("Conectando al Hub...");
     
     const { ref, push, set } = window.dbRefs;
     const cotizacionesRef = ref(window.db, 'cotizaciones');
     const nuevaCotRef = push(cotizacionesRef);
 
     const datos = {
-        cliente: document.getElementById('c-nom').value || "Cliente Genérico",
-        obra: document.getElementById('c-obra').value || "No especificada",
+        cliente: document.getElementById('c-nom').value || "Cliente Nuevo",
+        obra: document.getElementById('c-obra').value || "S/U",
         total: document.getElementById('tt').innerText,
         vendedor: document.getElementById('v-nombre').value,
-        items: productos,
-        fecha: document.getElementById('fecha-actual').value
+        fecha: document.getElementById('fecha-actual').value,
+        items: productos
     };
 
     try {
         await set(nuevaCotRef, datos);
-        alert("Sincronizado con el Hub de Magedi");
+        alert("Cotización enviada al Hub de Magedi ✅");
     } catch (e) {
-        alert("Error de conexión");
+        alert("Error al guardar en la nube");
     }
 }
 
@@ -116,23 +108,25 @@ function mostrarHistorial() {
     const div = document.getElementById('lista-historial');
 
     onValue(ref(window.db, 'cotizaciones'), (snapshot) => {
-        div.innerHTML = "<h4>Cotizaciones en el Hub (Nube):</h4>";
+        div.innerHTML = "<h4>Cotizaciones Sincronizadas:</h4>";
         const data = snapshot.val();
         if (data) {
             Object.keys(data).reverse().forEach(key => {
                 const c = data[key];
                 div.innerHTML += `
-                    <div class="historial-item" style="border-bottom:1px solid #eee; padding:5px; display:flex; justify-content:space-between;">
-                        <span><strong>${c.cliente}</strong> - ${c.total}</span>
-                        <button onclick="borrarDelHub('${key}')" style="color:red; background:none; border:none; cursor:pointer;">Eliminar</button>
+                    <div style="display:flex; justify-content:space-between; padding:8px; border-bottom:1px solid #eee; background:#fff; margin-bottom:5px;">
+                        <span><strong>${c.cliente}</strong> (${c.total})</span>
+                        <button onclick="borrarDelHub('${key}')" style="color:red; border:none; background:none; cursor:pointer;">Eliminar</button>
                     </div>`;
             });
+        } else {
+            div.innerHTML += "<p>No hay cotizaciones en el Hub.</p>";
         }
     });
 }
 
 function borrarDelHub(id) {
-    if(confirm("¿Eliminar del Hub central?")) {
+    if(confirm("¿Borrar permanentemente del Hub?")) {
         window.dbRefs.remove(window.dbRefs.ref(window.db, 'cotizaciones/' + id));
     }
 }
@@ -148,11 +142,11 @@ function generarPDF() {
         const width = pdf.internal.pageSize.getWidth();
         const height = (canvas.height * width) / canvas.width;
         pdf.addImage(img, 'PNG', 0, 0, width, height);
-        pdf.save(`Magedi_${document.getElementById('c-nom').value}.pdf`);
+        pdf.save(`MAGEDI_${document.getElementById('c-nom').value}.pdf`);
         noPrint.forEach(el => el.style.display = 'block');
     });
 }
 
 function nuevaCotizacion() {
-    if(confirm("¿Limpiar todo?")) location.reload();
+    if(confirm("¿Deseas limpiar el formato actual?")) location.reload();
 }

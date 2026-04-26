@@ -1,30 +1,21 @@
 :root { --rojo: #d32f2f; --gris: #2d2d2d; --verde: #27ae60; --azul: #2980b9; }
-
-body { font-family: Arial, sans-serif; background: #f4f4f4; padding: 10px; }
-
-.container { max-width: 850px; margin: auto; background: #fff; padding: 20px; border-top: 10px solid var(--rojo); box-shadow: 0 0 15px rgba(0,0,0,0.1); }
-
-.header-magedi { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--rojo); padding-bottom: 10px; }
-.logo { width: 120px; }
-
-.admin-panel { background: #f9f9f9; padding: 15px; margin-bottom: 20px; border: 1px solid #ddd; border-radius: 5px; }
-
-.grid-form { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
-input { padding: 8px; border: 1px solid #ccc; border-radius: 4px; width: 100%; box-sizing: border-box; }
-
-.tabla-cotizacion { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 0.9rem; }
-.tabla-cotizacion th { background: var(--gris); color: #fff; padding: 10px; }
-.tabla-cotizacion td { border: 1px solid #ddd; padding: 8px; text-align: center; }
-
-.footer-calculos { display: flex; justify-content: space-between; margin-top: 20px; flex-wrap: wrap; }
-.banco-box { font-size: 0.8rem; background: #eee; padding: 10px; border-left: 5px solid var(--rojo); margin-bottom: 10px; }
-
-.main-actions { position: fixed; bottom: 20px; right: 20px; display: flex; gap: 10px; }
-.main-actions button { padding: 12px 20px; border: none; color: #fff; border-radius: 50px; cursor: pointer; font-weight: bold; box-shadow: 0 4px 6px rgba(0,0,0,0.2); }
-
-@media print { .no-print { display: none !important; } }
+body { font-family: 'Segoe UI', Arial, sans-serif; background: #f0f2f5; padding: 10px; margin: 0; }
+.container { max-width: 850px; margin: auto; background: #fff; padding: 25px; border-top: 10px solid var(--rojo); box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+.header-magedi { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--rojo); padding-bottom: 15px; margin-bottom: 20px; }
+.logo { width: 130px; }
+.admin-panel { background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #dee2e6; }
+.grid-form { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; }
+input { padding: 10px; border: 1px solid #ced4da; border-radius: 4px; width: 100%; box-sizing: border-box; }
+.tabla-cotizacion { width: 100%; border-collapse: collapse; margin-top: 20px; }
+.tabla-cotizacion th { background: var(--gris); color: white; padding: 12px; font-size: 0.85rem; }
+.tabla-cotizacion td { border: 1px solid #eee; padding: 10px; text-align: center; font-size: 0.9rem; }
+.footer-calculos { display: flex; justify-content: space-between; margin-top: 25px; flex-wrap: wrap; }
+.total-destacado { font-weight: bold; color: var(--rojo); font-size: 1.4rem; border-top: 2px solid var(--rojo); margin-top: 10px; }
+.main-actions { position: fixed; bottom: 20px; right: 20px; display: flex; flex-direction: column; gap: 10px; }
+.main-actions button { padding: 15px; border: none; color: white; border-radius: 50%; width: 60px; height: 60px; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.3); font-size: 1.2rem; }
 @media (max-width: 600px) {
+    .container { padding: 10px; }
     .header-magedi { flex-direction: column; text-align: center; }
-    .tabla-cotizacion { font-size: 0.7rem; }
-    .main-actions { width: 100%; left: 0; bottom: 0; border-radius: 0; justify-content: center; }
+    .main-actions { flex-direction: row; bottom: 10px; right: 10px; }
+    .main-actions button { width: 50px; height: 50px; font-size: 1rem; }
 }
