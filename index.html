@@ -26,17 +26,16 @@
                 <input type="text" id="db-nom" placeholder="Producto (ej: MR-42)">
                 <input type="text" id="db-desc" placeholder="Descripción">
                 <input type="number" id="db-pu" placeholder="Precio Unitario">
-                <button onclick="agregarAlCatalogo()" style="background: var(--azul);">Guardar en Catálogo</button>
             </div>
             <div id="sugerencias" class="sugerencias-box"></div>
             
             <div style="margin-top: 15px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
                 <input type="number" id="db-m3" placeholder="Cantidad (m3)">
-                <button onclick="agregarFila()" style="background: var(--verde);">+ Añadir a Cotización</button>
+                <button onclick="agregarFila()" style="background: var(--verde); color:white; border:none; padding:10px; border-radius:5px; cursor:pointer;">+ Añadir a Cotización</button>
             </div>
 
-            <div id="lista-historial" class="historial-container" style="margin-top:20px; border-top:1px solid #ccc; padding-top:10px;">
-                <p style="font-size:0.8rem; color:#666;">Cargando historial del Hub...</p>
+            <div id="lista-historial" style="margin-top:20px; border-top:1px solid #ccc; padding-top:10px;">
+                <p style="font-size:0.8rem; color:#666;">Conectando al Hub de Magedi...</p>
             </div>
         </section>
 
@@ -46,8 +45,7 @@
                 <input type="date" id="fecha-actual">
             </div>
             <div class="data-row">
-                <input type="text" id="c-obra" placeholder="Ubicación de la Obra">
-                <input type="text" id="c-atencion" placeholder="Atención a:">
+                <input type="text" id="c-obra" placeholder="Ubicación de la Obra (Veracruz, Medellín, etc.)">
             </div>
         </section>
 
@@ -55,7 +53,6 @@
             <thead>
                 <tr>
                     <th>CONCEPTO</th>
-                    <th>DESCRIPCIÓN</th>
                     <th>CANTIDAD</th>
                     <th>P. UNITARIO</th>
                     <th>IMPORTE</th>
@@ -73,23 +70,21 @@
             </div>
             <div class="totales-container">
                 <div class="totales-row"><span>SUBTOTAL:</span> <span id="st">$0.00</span></div>
-                <div class="totales-row"><span>I.V.A. (16%):</span> <span id="iv">$0.00</span></div>
                 <div class="totales-row total-destacado"><span>TOTAL:</span> <span id="tt">$0.00</span></div>
             </div>
         </section>
 
         <footer class="footer-final">
             <div class="vendedor-datos">
-                <input type="text" placeholder="Nombre del Vendedor" id="v-nombre" style="font-weight:bold; text-align:right;">
-                <input type="text" placeholder="Teléfono" id="v-tel" style="text-align:right;">
+                <input type="text" placeholder="Nombre del Vendedor" id="v-nombre" style="font-weight:bold; text-align:right; border:none; border-bottom:1px solid #ccc;">
                 <p class="firma-label">Firma Autorizada</p>
             </div>
         </footer>
 
         <div class="main-actions no-print">
-            <button onclick="finalizarYGuardar()" class="btn-save" style="background: var(--verde);">💾 Guardar en Hub</button>
-            <button onclick="generarPDF()" class="btn-pdf" style="background: var(--azul);">📥 PDF</button>
-            <button onclick="nuevaCotizacion()" style="background: #7f8c8d;">🆕 Nueva</button>
+            <button onclick="finalizarYGuardar()" style="background: var(--verde);">💾 Guardar en Hub</button>
+            <button onclick="generarPDF()" style="background: var(--azul);">📥 PDF</button>
+            <button onclick="location.reload()" style="background: #7f8c8d;">🆕 Nueva</button>
         </div>
     </div>
 
@@ -104,8 +99,6 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
-
-        // Exportamos a window para que script.js pueda usarlas
         window.db = db;
         window.dbRefs = { ref, push, set, onValue, remove };
     </script>
