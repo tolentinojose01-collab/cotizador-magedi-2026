@@ -2,14 +2,8 @@ let productos = [];
 let catalogoProductos = JSON.parse(localStorage.getItem('magedi_catalogo')) || [];
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Fecha automática ajustada a hoy
-    const hoy = new Date();
-    const offset = hoy.getTimezoneOffset();
-    const fechaLocal = new Date(hoy.getTime() - (offset * 60 * 1000));
-    document.getElementById('fecha-actual').value = fechaLocal.toISOString().split('T')[0];
-    
-    // Esperar un segundo a que Firebase cargue
-    setTimeout(mostrarHistorial, 1500);
+    document.getElementById('fecha-actual').valueAsDate = new Date();
+    mostrarHistorial();
     setupBuscador();
 });
 
@@ -84,69 +78,52 @@ function renderTabla() {
     document.getElementById('tt').innerText = `$${(subtotal + iva).toLocaleString('es-MX', {minimumFractionDigits: 2})}`;
 }
 
-async function finalizarYGuardar() {
-    if(!window.dbRefs) return alert("Conectando con Firebase...");
-    const { ref, push, set } = window.dbRefs;
-
+function finalizarYGuardar() {
     const datos = {
+        id: Date.now(),
         cliente: document.getElementById('c-nom').value || "S/N",
-        empresa: document.getElementById('c-empresa').value || "S/N",
         obra: document.getElementById('c-obra').value || "S/N",
         v_nom: document.getElementById('v-nombre').value,
         v_tel: document.getElementById('v-tel').value,
         v_cor: document.getElementById('v-correo').value,
         total: document.getElementById('tt').innerText,
-        fecha: document.getElementById('fecha-actual').value,
         items: [...productos]
     };
-
-    try {
-        await set(push(ref(window.db, 'cotizaciones')), datos);
-        alert("Cotización sincronizada en el Hub ✅");
-    } catch (e) {
-        alert("Error al sincronizar");
-    }
+    let hist = JSON.parse(localStorage.getItem('magedi_hist')) || [];
+    hist.push(datos);
+    localStorage.setItem('magedi_hist', JSON.stringify(hist));
+    mostrarHistorial();
+    alert("Cotización guardada.");
 }
 
 function mostrarHistorial() {
-    if(!window.dbRefs) return;
-    const { ref, onValue } = window.dbRefs;
     const div = document.getElementById('lista-historial');
-
-    onValue(ref(window.db, 'cotizaciones'), (snapshot) => {
-        div.innerHTML = "<h4 style='margin-top:20px;'>Historial Hub (PC/Celular):</h4>";
-        const data = snapshot.val();
-        if (data) {
-            Object.keys(data).reverse().forEach(key => {
-                const h = data[key];
-                div.innerHTML += `
-                    <div style="display:flex; justify-content:space-between; background:#fff; padding:8px; border:1px solid #ddd; margin-bottom:5px; border-radius:4px;">
-                        <span style="color:var(--azul); cursor:pointer;" onclick='cargarDeHub(${JSON.stringify(h)})'>
-                            <strong>${h.cliente}</strong> - ${h.total} (${h.fecha})
-                        </span>
-                        <button onclick="borrarDeHub('${key}')" style="color:red; border:none; background:none; cursor:pointer;">Eliminar</button>
-                    </div>`;
-            });
-        }
-    });
+    let hist = JSON.parse(localStorage.getItem('magedi_hist')) || [];
+    div.innerHTML = "<h4 style='margin-top:20px;'>Historial:</h4>" + hist.reverse().map(h => `
+        <div style="display:flex; justify-content:space-between; background:#fff; padding:8px; border:1px solid #ddd; margin-bottom:5px; border-radius:4px;">
+            <span onclick="cargarH(${h.id})" style="cursor:pointer; color:var(--azul);"><strong>${h.cliente}</strong> - ${h.total}</span>
+            <button onclick="borrarH(${h.id})" style="color:red; border:none; background:none; cursor:pointer;">Eliminar</button>
+        </div>`).join('');
 }
 
-function cargarDeHub(h) {
-    document.getElementById('c-nom').value = h.cliente;
-    document.getElementById('c-empresa').value = h.empresa;
-    document.getElementById('c-obra').value = h.obra;
-    document.getElementById('v-nombre').value = h.v_nom || "";
-    document.getElementById('v-tel').value = h.v_tel || "";
-    document.getElementById('v-correo').value = h.v_cor || "";
-    document.getElementById('fecha-actual').value = h.fecha;
-    productos = h.items;
-    renderTabla();
-}
-
-function borrarDeHub(id) {
-    if(confirm("¿Borrar del Hub central?")) {
-        window.dbRefs.remove(window.dbRefs.ref(window.db, 'cotizaciones/' + id));
+function cargarH(id) {
+    let hist = JSON.parse(localStorage.getItem('magedi_hist'));
+    const h = hist.find(x => x.id === id);
+    if (h) {
+        document.getElementById('c-nom').value = h.cliente;
+        document.getElementById('c-obra').value = h.obra;
+        document.getElementById('v-nombre').value = h.v_nom || "";
+        document.getElementById('v-tel').value = h.v_tel || "";
+        document.getElementById('v-correo').value = h.v_cor || "";
+        productos = h.items;
+        renderTabla();
     }
+}
+
+function borrarH(id) {
+    let hist = JSON.parse(localStorage.getItem('magedi_hist')).filter(x => x.id !== id);
+    localStorage.setItem('magedi_hist', JSON.stringify(hist));
+    mostrarHistorial();
 }
 
 function limpiarCamposConcepto() {
@@ -183,5 +160,7 @@ function capturarImagen() {
 }
 
 function nuevaCotizacion() {
-    if(confirm("¿Limpiar todo el formato?")) location.reload();
+    productos = [];
+    renderTabla();
+    document.querySelectorAll('input').forEach(i => { if(i.id !== 'fecha-actual') i.value = ""; });
 }
